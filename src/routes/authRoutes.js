@@ -156,8 +156,8 @@ router.post('/login', (req, res) => {
       distinctUsersCount: riskAssessment.distinctUsersCount,
       message:
         riskAssessment.attackPattern === 'PASSWORD_SPRAYING'
-          ? 'CHẶN TRƯỚC BCRYPT (HIGH RISK): Phát hiện tấn công rải mật khẩu (Password Spraying) trên nhiều tài khoản từ cùng một địa chỉ IP!'
-          : 'CHẶN TRƯỚC BCRYPT (HIGH RISK): Phát hiện tấn công dò mật khẩu liên tiếp (Brute-force) vượt ngưỡng an toàn!',
+          ? 'Cảnh báo bảo mật: Phát hiện dấu hiệu thử mật khẩu bất thường trên nhiều tài khoản từ địa chỉ IP của bạn. Hệ thống đã tạm khóa truy cập để bảo vệ an toàn!'
+          : 'Cảnh báo bảo mật: Bạn đã nhập sai mật khẩu quá số lần cho phép từ thiết bị này. Hệ thống đã tạm thời khóa đăng nhập để bảo vệ an toàn tài khoản!',
     });
   }
 

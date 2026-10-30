@@ -8,7 +8,10 @@
     "start": "node server.js",
     "test": "node --test tests/security.test.js",
     "tool:sha": "node scripts/sha-inspector.js",
-    "tool:soc": "node scripts/soc-detector.js"
+    "tool:soc": "node scripts/soc-detector.js",
+    "tool:restore": "node scripts/restore-storage.js",
+    "restart": "node scripts/kill-server.js && node server.js",
+    "stop": "node scripts/kill-server.js"
   },
   "dependencies": {
     "bcryptjs": "3.0.3",

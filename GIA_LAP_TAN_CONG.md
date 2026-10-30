@@ -11,14 +11,14 @@
 Mô hình thực nghiệm được thiết kế theo chuẩn Zero-Trust: **Không tin tưởng bất kỳ thiết bị hay yêu cầu nào đến từ bên ngoài mạng cục bộ**.
 
 ```text
-+------------------------------------------+        Mạng ảo VMware (NAT / Bridged)        +------------------------------------------+
++------------------------------------------+        Mạng Bridged (Chung Wi-Fi)             +------------------------------------------+
 |          MÁY ẢO VMWARE WIN 10            |                                              |                 MÁY THẬT                 |
 |       (Attacker / External Client)       | -------------------------------------------> |         (Zero-Trust Vault Server)        |
 |                                          |                                              |                                          |
-|  * Postman / cURL (Tấn công API)         |          Gói tin HTTP Port 3000              |  * Node.js Server (Express Port 3000)    |
+|  * Postman / cURL (Tấn công API)         |          Gói tin HTTP 3000 / HTTPS 3443      |  * Node.js Server (HTTP 3000 & HTTPS 3443)|
 |  * Trình duyệt Web độc lập (F12)         |                                              |  * SQLite Database (data/vault.db)       |
 |  * HxD Hex Editor (Sửa byte bản mã)      |                                              |  * Kho mã hóa AES-256-GCM (storage/)     |
-|  * Địa chỉ IP: DHCP từ VMware VMnet8     |                                              |  * Địa chỉ IP Host: 192.168.101.1        |
+|  * Địa chỉ IP: Cùng dải mạng Wi-Fi Host  |                                              |  * Địa chỉ IP Host: 192.168.2.57         |
 +------------------------------------------+                                              +------------------------------------------+
 ```
 
@@ -26,30 +26,30 @@ Mô hình thực nghiệm được thiết kế theo chuẩn Zero-Trust: **Khôn
 
 ## 2. Các Bước Thiết Lập Kết Nối Giữa Máy Ảo & Máy Thật
 
-### Bước 2.1. Cấu hình Card mạng VMware
+### Bước 2.1. Cấu hình Card mạng VMware (Chế độ Bridged)
 1. Trên phần mềm VMware Workstation, mở máy ảo Windows 10 -> vào mục **Virtual Machine Settings** -> **Network Adapter**.
-2. Chọn chế độ mạng:
-   - **NAT (Khuyến nghị nhất — VMnet8):** Máy thật có địa chỉ IP mặc định là `192.168.101.1`.
-   - **Bridged (Replicate physical network state):** Máy ảo nhận cùng dải IP Wi-Fi với máy thật (ví dụ `192.168.2.x`).
+2. Tích chọn chế độ mạng **Bridged: Connected directly to the physical network** và tích chọn ô **Replicate physical network connection state**.
+3. Máy ảo sẽ tự động nhận một địa chỉ IP cùng dải mạng Wi-Fi với máy thật (ví dụ `192.168.2.xxx`), địa chỉ IP của máy chủ trên máy thật là **`192.168.2.57`**.
 
 ### Bước 2.2. Khởi chạy Server và Mở Cổng Tường lửa trên Máy thật
 1. Khởi chạy máy chủ tại thư mục dự án trên máy thật:
    ```powershell
    npm start
    ```
-   *(Hệ thống hiển thị: `[Zero-Trust Vault] Server running at http://localhost:3000`)*.
-2. Mở cổng 3000 trên Windows Firewall của máy thật (nếu máy ảo chưa truy cập được):
+   *(Hệ thống khởi chạy song song: HTTP tại `http://localhost:3000` và HTTPS tại `https://localhost:3443`)*.
+2. Mở cổng 3000 và 3443 trên Windows Firewall của máy thật:
    ```powershell
    # Chạy lệnh PowerShell với quyền Administrator trên máy thật:
    New-NetFirewallRule -DisplayName "ZeroTrustVault-3000" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow
+   New-NetFirewallRule -DisplayName "ZeroTrustVault-3443" -Direction Inbound -LocalPort 3443 -Protocol TCP -Action Allow
    ```
 
 ### Bước 2.3. Kiểm tra thông mạng từ Máy ảo VMware Windows 10
 Mở cửa sổ Command Prompt (CMD) trên máy ảo Windows 10 và kiểm tra kết nối:
 ```cmd
-ping 192.168.101.1
+ping 192.168.2.57
 ```
-*(Nếu thấy kết quả `Reply from 192.168.101.1: bytes=32 time<1ms TTL=128` là kết nối thành công).*
+*(Nếu thấy kết quả `Reply from 192.168.2.57: bytes=32 time<1ms TTL=...` là kết nối thành công).*
 
 ---
 
@@ -81,9 +81,15 @@ ping 192.168.101.1
 * **Bối cảnh tấn công**: Kẻ tấn công trên máy ảo dùng Postman hoặc cURL cố tình gọi trực tiếp vào các đường dẫn API phổ biến để thu thập dữ liệu trái phép mà không qua giao diện Web.
 * **Thao tác thực hiện trên máy ảo (CMD/PowerShell)**:
   ```cmd
-  curl -i http://192.168.101.1:3000/api/documents
-  curl -i http://192.168.101.1:3000/api/documents/public
-  curl -i -X POST http://192.168.101.1:3000/api/auth/login
+  # Thử nghiệm qua HTTP (cổng 3000):
+  curl.exe -i http://192.168.2.57:3000/api/documents
+  curl.exe -i http://192.168.2.57:3000/api/documents/public
+  curl.exe -i -X POST http://192.168.2.57:3000/api/auth/login
+
+  # Hoặc thử nghiệm qua HTTPS (cổng 3443, dùng thêm cờ -k để chấp nhận chứng chỉ SSL tự ký):
+  curl.exe -i -k https://192.168.2.57:3443/api/documents
+  curl.exe -i -k https://192.168.2.57:3443/api/documents/public
+  curl.exe -i -k -X POST https://192.168.2.57:3443/api/auth/login
   ```
 * **Kết quả quan sát**:
   - Máy chủ trả về đồng nhất: `HTTP/1.1 404 Not Found`.
@@ -98,13 +104,13 @@ ping 192.168.101.1
   ```powershell
   # Chạy vòng lặp gửi 10 yêu cầu quét đường dẫn rác:
   1..10 | ForEach-Object {
-      curl.exe -s http://192.168.101.1:3000/api/fuzz-probe-$_ | Out-Null
+      curl.exe -s http://192.168.2.57:3000/api/fuzz-probe-$_ | Out-Null
       Write-Host "Đã gửi request quét thăm dò lần $_"
   }
   ```
 * **Thực hiện yêu cầu thứ 11**:
   ```cmd
-  curl -i http://192.168.101.1:3000/api/documents
+  curl.exe -i http://192.168.2.57:3000/api/documents
   ```
 * **Kết quả quan sát**:
   - Máy chủ phản hồi mã lỗi: **`HTTP/1.1 429 Too Many Requests`**.
@@ -123,14 +129,14 @@ ping 192.168.101.1
 
 * **Bối cảnh tấn công**: Kẻ tấn công cố tình thử sai mật khẩu liên tiếp nhằm dò mật khẩu quản trị hoặc làm nghẽn CPU máy chủ bằng hàm băm nặng `BCrypt`.
 * **Thao tác thực hiện trên máy ảo**:
-  1. Mở trình duyệt Web trên máy ảo truy cập: `http://192.168.101.1:3000`.
+  1. Mở trình duyệt Web trên máy ảo truy cập: `https://192.168.2.57:3443` (hoặc `http://192.168.2.57:3000`).
   2. Bấm nút **Chuyển sang Cổng phát hành** để mở màn hình đăng nhập.
   3. Nhập tài khoản: `issuer_admin`.
   4. Cố tình nhập sai mật khẩu 4 lần liên tiếp (ví dụ: `123456`, `admin123`, `password`, `sai_pass`).
 * **Kết quả quan sát**:
   - Tại lần thử thứ 4, hệ thống không gọi hàm `BCrypt` mà kích hoạt bộ lọc sớm **Pre-BCrypt Risk Triage**:
   - Phản hồi mã lỗi: **`HTTP 429 PRE_BCRYPT_BLOCKED`**.
-  - Thông báo đỏ hiển thị trên giao diện: *Phát hiện tấn công vét cạn mật khẩu từ IP của bạn! Hệ thống chặn sớm để bảo vệ tài nguyên.*
+  - Thông báo đỏ hiển thị trên giao diện: *Cảnh báo bảo mật: Bạn đã nhập sai mật khẩu quá số lần cho phép từ thiết bị này. Hệ thống đã tạm thời khóa đăng nhập để bảo vệ an toàn tài khoản!*
 * **Kiểm chứng trên máy thật**:
   Mở terminal máy thật chạy công cụ SOC:
   ```powershell
@@ -146,8 +152,8 @@ ping 192.168.101.1
 * **Thao tác thực hiện**:
   1. Trên **Máy thật**, mở thư mục `storage/` chứa các tệp mã hóa nhị phân `.enc`.
   2. Chọn một tệp bất kỳ (ví dụ `897fb0e3-d5c0-482a-bdf8-0921264b8481.enc` tương ứng với văn bản `VB-2026-0002`).
-  3. Mở tệp bằng phần mềm **HxD Hex Editor** (hoặc Notepad), sửa duy nhất **1 ký tự bất kỳ** trong tệp và bấm **Save (Ctrl+S)**.
-  4. Quay sang **Máy ảo VMware**, mở trình duyệt truy cập `http://192.168.101.1:3000`.
+  3. Mở tệp bằng phần mềm Notepad, sửa duy nhất **1 ký tự bất kỳ** trong tệp và bấm **Save (Ctrl+S)**.
+  4. Quay sang **Máy ảo VMware**, mở trình duyệt truy cập `https://192.168.2.57:3443` (hoặc `http://192.168.2.57:3000`).
   5. Tại bảng **Danh sách văn bản công khai**, bấm nút **Xem** tại văn bản `VB-2026-0002` (hoặc nhập mã `VB-2026-0002` vào thanh tra cứu).
 * **Kết quả quan sát**:
   - Hệ thống tính toán Auth Tag của thuật toán `AES-256-GCM` và đối chiếu mã băm `SHA-256` bằng hàm hằng thời gian `crypto.timingSafeEqual()`.
@@ -186,8 +192,9 @@ ping 192.168.101.1
 * **Thao tác thực hiện trên máy ảo**:
   1. Mở trình duyệt Web trên máy ảo, gõ địa chỉ kèm mã chia sẻ không tồn tại hoặc đã quá hạn:
      ```text
-     http://192.168.101.1:3000/?share=token_sai_hoac_token_da_het_han_thoi_gian
+     https://192.168.2.57:3443/?share=token_sai_hoac_token_da_het_han_thoi_gian
      ```
+     *(hoặc qua cổng HTTP: `http://192.168.2.57:3000/?share=token_sai_hoac_token_da_het_han_thoi_gian`)*.
   2. Bấm nút **Tra cứu văn bản**.
 * **Kết quả quan sát**:
   - Máy chủ kiểm tra trường `expires_at` trong bảng `share_links` so với thời gian thực `new Date().toISOString()`.
