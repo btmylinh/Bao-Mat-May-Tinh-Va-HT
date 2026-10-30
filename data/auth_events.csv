@@ -330,3 +330,8 @@ timestamp,user,src_ip,event,asset,details
 2026-10-30T05:18:45.714Z,ke_toan_02,203.0.113.199,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
 2026-10-30T05:18:45.715Z,issuer_admin,203.0.113.199,pre_bcrypt_blocked,auth-portal,pattern=PASSWORD_SPRAYING;risk=HIGH;fails=2;users=3
 2026-10-30T05:18:45.909Z,issuer_admin,127.0.0.1,login_success,auth-portal,stage=password_verified;risk=LOW
+2026-10-30T08:35:44.882Z,issuer_admin,::ffff:192.168.2.72,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T08:35:47.343Z,issuer_admin,::ffff:192.168.2.72,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T08:35:49.226Z,issuer_admin,::ffff:192.168.2.72,login_failed,auth-portal,reason=invalid_credentials;risk=MEDIUM
+2026-10-30T08:35:50.857Z,issuer_admin,::ffff:192.168.2.72,login_failed,auth-portal,reason=invalid_credentials;risk=MEDIUM
+2026-10-30T08:35:52.646Z,issuer_admin,::ffff:192.168.2.72,pre_bcrypt_blocked,auth-portal,pattern=BRUTE_FORCE;risk=HIGH;fails=4;users=1
