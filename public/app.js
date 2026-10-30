@@ -113,6 +113,9 @@ function uint8ToBase64(bytes) {
  * - Runs async debugger trap when outside automated E2E browser session
  */
 function initSecurityShield() {
+  // Cho phép mở DevTools và Chuột phải để thuận tiện gỡ lỗi, kiểm tra Network và chụp ảnh minh chứng API
+  const devToolsAllowed = true;
+
   window.addEventListener(
     'keydown',
     (e) => {
@@ -121,7 +124,7 @@ function initSecurityShield() {
       const isCtrlShiftInspect =
         (e.ctrlKey || e.metaKey) && e.shiftKey && (key === 'I' || key === 'J' || key === 'C');
       const isViewSource = (e.ctrlKey || e.metaKey) && key === 'U';
-      if (isF12 || isCtrlShiftInspect || isViewSource) {
+      if ((isF12 || isCtrlShiftInspect || isViewSource) && !devToolsAllowed) {
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -134,8 +137,11 @@ function initSecurityShield() {
   window.addEventListener(
     'contextmenu',
     (e) => {
-      e.preventDefault();
-      return false;
+      if (!devToolsAllowed) {
+        e.preventDefault();
+        return false;
+      }
+      return undefined;
     },
     true
   );
@@ -149,22 +155,9 @@ function initSecurityShield() {
     // Ignore if environment restricts freezing host objects
   }
 
-  const isAutomatedTest =
-    Boolean(navigator.webdriver) || window.location.search.includes('e2e=1');
-
-  if (!isAutomatedTest) {
-    setInterval(() => {
-      const widthDiff = (window.outerWidth || 0) - (window.innerWidth || 0);
-      const heightDiff = (window.outerHeight || 0) - (window.innerHeight || 0);
-      if (widthDiff > 160 || heightDiff > 160) {
-        // Trigger async debugger trap when DevTools dock is detected
-        Function('debugger')();
-      }
-    }, 1500);
-  }
-
+  // Tắt bẫy debugger để mở tab Network / Console mượt mà không bị treo trang
   window.__ZT_SHIELD_ACTIVE__ = Object.freeze({
-    antiDevTools: true,
+    antiDevTools: false,
     antiHooking: true,
     strictTunnel: true,
     stringObfuscation: true,
