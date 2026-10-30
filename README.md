@@ -126,10 +126,3 @@ npm run tool:soc
 | **Khóa bí mật 2FA (`TOTP Secret`)** | `JBSWY3DPEHPK3PXP` | Sinh mã OTP 6 chữ số theo chuẩn RFC 6238 (chu kỳ 30 giây) |
 | **Mã xác nhận lưu trữ (`Signing PIN`)** | `UIT-SIGN-2026` | Xác nhận cấp 2 khi phát hành và ký số văn bản mới (`UC02`) |
 | **Đơn vị ban hành hiển thị** | `Phòng Đào tạo - ĐH CNTT (Issuer)` | Tên cơ quan gắn kèm chữ ký số `RSA-PSS` |
-
-### 6.2. Hai Hồ sơ Văn bản Khởi tạo Tự động Khi Chạy Lần Đầu
-
-| Mã định danh | Tên tệp văn bản gốc | Phạm vi (`Visibility`) | Đặc điểm truy cập trên phần mềm |
-| :--- | :--- | :--- | :--- |
-| **`VB-2026-0001`** | `Quyet_Dinh_Cong_Nhan_Tot_Nghiep_2026.txt` | **Công khai (`PUBLIC`)** | Hiển thị trực tiếp tại bảng **Danh sách văn bản công khai** ở trang chủ; khách có thể bấm **Xem** hoặc **Tải tệp về máy** ngay mà không cần đăng nhập. |
-| **`VB-2026-0002`** | `Hop_Dong_Ngan_Sach_Noi_Bo_2026.txt` | **Nội bộ (`PRIVATE`)** | Ẩn hoàn toàn khỏi bảng danh sách công khai; người nhận chỉ mở được khi nhập đúng mã `VB-2026-0002` hoặc dán liên kết chia sẻ hợp lệ (`?share=...`) vào thanh tra cứu. |
