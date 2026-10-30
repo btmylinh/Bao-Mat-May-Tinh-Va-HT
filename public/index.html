@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cổng Văn bản &amp; Hồ sơ Điện tử</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="portal-shell">
+    <!-- TOP HEADER -->
+    <header class="portal-header">
+      <div class="portal-brand" id="btn-home-brand" role="button" tabindex="0">
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Cổng Văn bản &amp; Hồ sơ Điện tử</span>
+          <span class="brand-subtitle">Hệ thống Lưu trữ, Phát hành và Tra cứu Văn bản Nội bộ</span>
+        </div>
+      </div>
+
+      <!-- HEADER RIGHT: PUBLIC MODE vs ISSUER LOGGED-IN MODE -->
+      <div class="portal-header-actions">
+        <!-- Shown when in Public Recipient Mode -->
+        <div id="header-guest-actions" class="header-action-group">
+          <button type="button" id="btn-open-issuer-login" class="btn-primary">
+            Đăng nhập Cán bộ phát hành
+          </button>
+        </div>
+
+        <!-- Shown when Issuer is Logged In -->
+        <div id="header-issuer-actions" class="header-action-group hidden">
+          <button type="button" id="btn-switch-to-public" class="btn-secondary">
+            Cổng tra cứu khách
+          </button>
+          <div class="issuer-user-pill">
+            <span class="issuer-avatar">CB</span>
+            <span id="issuer-logged-name" class="issuer-name">Nguyễn Văn An • Phòng Đào tạo</span>
+          </div>
+          <button type="button" id="btn-logout-issuer" class="btn-secondary">
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- BODY LAYOUT: LEFT SIDEBAR (SHOWN WHEN ISSUER LOGGED IN) + MAIN CONTENT -->
+    <div class="portal-body-layout">
+      <aside id="issuer-sidebar" class="issuer-sidebar hidden" aria-label="Điều hướng Cán bộ phát hành">
+        <div class="sidebar-nav-title">Cổng Cán bộ phát hành</div>
+        <nav class="sidebar-nav-list">
+          <button type="button" id="nav-issuer-catalog" class="sidebar-nav-btn active">
+            <span>Quản lý danh mục văn bản</span>
+          </button>
+          <button type="button" id="nav-issuer-lookup" class="sidebar-nav-btn">
+            <span>Tra cứu văn bản</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- MAIN CONTENT CONTAINER -->
+      <main class="portal-main">
+        <!-- SIMPLE SINGLE-LINE ERROR NOTICE (SHOWN ONLY ON INVALID / BLOCKED ACCESS) -->
+        <div id="portal-global-notice" class="portal-notice-bar hidden" role="alert">
+          <span id="portal-notice-text"></span>
+          <button type="button" id="btn-close-notice" class="btn-notice-close" aria-label="Đóng">✕</button>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- NHÓM 2: CỔNG TRA CỨU & TIẾP NHẬN VĂN BẢN (NGƯỜI NHẬN / KHÁCH - UC05, UC06, UC07) -->
+        <!-- =================================================================== -->
+        <section id="recipient-portal-view" class="portal-section">
+          <!-- UC05: Mở và Tra cứu văn bản theo mã / liên kết -->
+          <div class="lookup-card">
+            <div class="lookup-card-header">
+              <h1 class="section-heading">Tra cứu &amp; Tiếp nhận Văn bản</h1>
+            </div>
+
+            <div class="lookup-bar-row">
+              <input
+                type="text"
+                id="lookup-query-input"
+                class="field-input lookup-input"
+                value=""
+                placeholder="Nhập mã định danh (ví dụ: VB-2026-0001) hoặc dán liên kết chia sẻ..."
+              />
+              <button type="button" id="btn-lookup-doc" class="btn-primary btn-lookup">
+                Tra cứu văn bản
+              </button>
+            </div>
+          </div>
+
+        <!-- UC06 (Xem trước nội dung văn bản trực tuyến) & UC07 (Tải tệp văn bản về máy tính) -->
+        <div id="recipient-preview-card" class="preview-card hidden">
+          <div class="preview-card-header">
+            <div class="preview-meta-group">
+              <div class="preview-title-row">
+                <span id="preview-doc-code" class="doc-code-badge">VB-2026-0001</span>
+                <h2 id="preview-doc-title" class="preview-doc-title">Quyet_Dinh_Cong_Nhan_Tot_Nghiep_2026.txt</h2>
+              </div>
+              <div class="preview-submeta-row">
+                <span>Cơ quan ban hành: <strong id="preview-doc-issuer">Phòng Đào tạo - Trường ĐH CNTT</strong></span>
+                <span class="meta-sep">•</span>
+                <span>Ngày ban hành: <strong id="preview-doc-date">—</strong></span>
+                <span class="meta-sep">•</span>
+                <span>Kích thước: <strong id="preview-doc-size">—</strong></span>
+              </div>
+            </div>
+
+            <!-- UC07: Nút Tải tệp về máy -->
+            <div class="preview-action-box">
+              <button type="button" id="btn-recipient-download" class="btn-primary">
+                Tải tệp về máy
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-card-body">
+            <label class="field-label">Bản xem trước văn bản trực tuyến:</label>
+            <div class="word-paper-stage">
+              <div id="preview-doc-content" class="word-paper-viewer"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANH SÁCH VĂN BẢN CÔNG KHAI (CHỈ HIỂN THỊ VĂN BẢN PUBLIC, ẨN VĂN BẢN NỘI BỘ/PRIVATE) -->
+        <div class="public-catalog-card">
+          <div class="public-catalog-header">
+            <div>
+              <h2 class="public-catalog-title">Danh sách văn bản công khai</h2>
+            </div>
+            <div class="search-box-wrap">
+              <input
+                type="search"
+                id="public-search-input"
+                class="field-input search-input"
+                placeholder="Lọc nhanh văn bản công khai..."
+              />
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã định danh</th>
+                  <th>Tên tệp</th>
+                  <th>Cơ quan ban hành</th>
+                  <th>Ngày ban hành</th>
+                  <th>Kích thước</th>
+                  <th>Phạm vi</th>
+                  <th class="col-actions">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="public-docs-tbody">
+                <!-- Populated by app.js with ONLY PUBLIC documents -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- NHÓM 1: CỔNG QUẢN TRỊ & PHÁT HÀNH VĂN BẢN (NGƯỜI PHÁT HÀNH - UC02, UC03, UC04) -->
+      <!-- =================================================================== -->
+      <section id="issuer-dashboard-view" class="portal-section hidden">
+        <!-- UC03: Quản lý danh mục kho văn bản -->
+        <div class="dashboard-toolbar">
+          <div>
+            <h1 class="section-heading">Danh mục Kho văn bản đã ban hành</h1>
+          </div>
+
+          <div class="dashboard-controls">
+            <div class="search-box-wrap">
+              <input
+                type="search"
+                id="search-docs-input"
+                class="field-input search-input"
+                placeholder="Tìm theo mã định danh hoặc tên tệp..."
+              />
+            </div>
+            <button type="button" id="btn-open-upload-modal" class="btn-primary">
+              + Tải lên văn bản mới
+            </button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã định danh</th>
+                <th>Tên tệp</th>
+                <th>Cơ quan ban hành</th>
+                <th>Ngày ban hành</th>
+                <th>Kích thước</th>
+                <th>Phạm vi</th>
+                <th>Trạng thái phát hành</th>
+                <th class="col-actions">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="issuer-docs-tbody">
+              <!-- Populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL UC01: ĐĂNG NHẬP HỆ THỐNG (NGƯỜI PHÁT HÀNH) -->
+  <!-- ======================================================================= -->
+  <div id="login-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-header">
+        <h3 id="login-modal-title" class="modal-title">Đăng nhập Cán bộ phát hành</h3>
+        <button type="button" id="btn-close-login-modal" class="btn-modal-close" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="field-group">
+          <label for="login-username-input" class="field-label">Tài khoản cán bộ</label>
+          <input
+            type="text"
+            id="login-username-input"
+            class="field-input"
+            value="issuer_admin"
+            placeholder="Nhập tài khoản..."
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="login-password-input" class="field-label">Mật khẩu</label>
+          <input
+            type="password"
+            id="login-password-input"
+            class="field-input"
+            value="Admin@123"
+            placeholder="Nhập mật khẩu..."
+          />
+        </div>
+
+        <div id="login-modal-alert" class="modal-inline-alert hidden" role="alert"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-login" class="btn-secondary">Hủy</button>
+        <button type="button" id="btn-submit-login" class="btn-primary">
+          Đăng nhập
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL UC02 & UC04: TẢI LÊN LƯU TRỮ VĂN BẢN MỚI & TẠO LIÊN KẾT CHIA SẺ -->
+  <!-- ======================================================================= -->
+  <div id="upload-share-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-header">
+        <h3 id="upload-modal-title" class="modal-title">Tải lên lưu trữ văn bản &amp; Cấp liên kết chia sẻ</h3>
+        <button type="button" id="btn-close-upload-modal" class="btn-modal-close" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="modal-body modal-split-grid">
+        <!-- CỘT TRÁI: UC02 - TẢI LÊN VÀ LƯU TRỮ VĂN BẢN MỚI -->
+        <div class="modal-pane">
+          <h4 class="pane-title">1. Tải lên và Lưu trữ văn bản mới</h4>
+
+          <div id="sign-dropzone" class="dropzone-box" tabindex="0" role="button">
+            <input type="file" id="file-input" class="sr-only" />
+            <p id="selected-file-name" class="dropzone-title">Kéo thả tệp vào đây hoặc bấm để chọn tệp từ máy tính</p>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="field-group">
+              <label for="doc-filename-input" class="field-label">Tên văn bản / Tên tệp</label>
+              <input
+                type="text"
+                id="doc-filename-input"
+                class="field-input"
+                value="Quyet_Dinh_Cong_Nhan_Tot_Nghiep_2026.txt"
+              />
+            </div>
+
+            <div class="field-group">
+              <label for="doc-signer-input" class="field-label">Cơ quan ban hành</label>
+              <input
+                type="text"
+                id="doc-signer-input"
+                class="field-input"
+                value="Phòng Đào tạo - Trường ĐH CNTT"
+              />
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="field-group">
+              <label for="doc-visibility-select" class="field-label">Phạm vi văn bản</label>
+              <select id="doc-visibility-select" class="field-input">
+                <option value="PUBLIC">Công khai (Hiện trên cổng tra cứu)</option>
+                <option value="PRIVATE">Nội bộ (Chỉ mở khi có mã hoặc liên kết)</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="doc-signing-pin" class="field-label">Mã xác nhận lưu trữ</label>
+              <input
+                type="password"
+                id="doc-signing-pin"
+                class="field-input"
+                value="UIT-SIGN-2026"
+                placeholder="Nhập mã xác nhận..."
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="doc-content-input" class="field-label">Xem trước nội dung văn bản</label>
+            <div id="upload-docx-preview" class="word-paper-viewer word-paper-compact hidden"></div>
+            <textarea id="doc-content-input" class="field-textarea" rows="4">BỘ GIÁO DỤC VÀ ĐÀO TẠO - TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN
+PHÒNG ĐÀO TẠO • SỐ HIỆU: 2026/QĐ-ĐHCNTT-ĐT
+QUYẾT ĐỊNH CÔNG NHẬN TỐT NGHIỆP ĐẠI HỌC CHÍNH QUY ĐỢT 1 NĂM 2026
+1. Nguyễn Văn An - MSSV: 22520001 - Xếp loại: Xuất sắc (GPA: 3.92/4.0)
+2. Trần Thị Bích Ngọc - MSSV: 22520045 - Xếp loại: Giỏi (GPA: 3.68/4.0)
+3. Lê Hoàng Minh Khôi - MSSV: 22520112 - Xếp loại: Giỏi (GPA: 3.55/4.0)</textarea>
+          </div>
+
+          <div id="upload-modal-alert" class="modal-inline-alert hidden" role="alert">
+            <span id="upload-alert-message"></span>
+          </div>
+
+          <div class="pane-actions">
+            <button type="button" id="btn-sign-doc" class="btn-primary">
+              Lưu trữ văn bản
+            </button>
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI: UC04 - TẠO LIÊN KẾT CHIA SẺ VĂN BẢN -->
+        <div class="modal-pane modal-pane-right">
+          <h4 class="pane-title">2. Tạo liên kết chia sẻ văn bản</h4>
+
+          <div class="share-target-box">
+            <div class="share-target-row">
+              <span class="share-target-label">Mã định danh:</span>
+              <strong id="share-modal-doccode" class="doc-code-badge">VB-2026-0001</strong>
+            </div>
+            <div class="share-target-row">
+              <span class="share-target-label">Tên văn bản:</span>
+              <strong id="share-modal-docname">Quyet_Dinh_Cong_Nhan_Tot_Nghiep_2026.txt</strong>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="share-expire-select" class="field-label">Thời hạn tồn tại của liên kết</label>
+            <select id="share-expire-select" class="field-input">
+              <option value="604800" selected>7 ngày (10.080 phút - Mặc định)</option>
+              <option value="2592000">30 ngày (43.200 phút)</option>
+              <option value="7776000">90 ngày (129.600 phút)</option>
+              <option value="31536000">Vô thời hạn - 1 năm (525.600 phút)</option>
+            </select>
+          </div>
+
+          <div class="pane-actions">
+            <button type="button" id="btn-create-share" class="btn-primary">
+              Tạo liên kết chia sẻ
+            </button>
+          </div>
+
+          <div class="field-group">
+            <label for="share-link-output" class="field-label">Liên kết chia sẻ gửi cho người nhận</label>
+            <div class="share-copy-row">
+              <input
+                type="text"
+                id="share-link-output"
+                class="field-input share-link-readonly"
+                readonly
+                placeholder="Bấm 'Tạo liên kết chia sẻ'..."
+              />
+              <button type="button" id="btn-copy-share" class="btn-secondary">
+                Sao chép liên kết
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-upload" class="btn-secondary">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL XÁC NHẬN XÓA VĂN BẢN (UC03) -->
+  <!-- ======================================================================= -->
+  <div id="delete-confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-header">
+        <h3 id="delete-modal-title" class="modal-title">Xác nhận xóa văn bản</h3>
+        <button type="button" id="btn-close-delete-modal" class="btn-modal-close" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="section-desc">Bạn có chắc chắn muốn xóa văn bản này khỏi kho lưu trữ và thu hồi toàn bộ liên kết chia sẻ liên quan không?</p>
+        <div class="share-target-box">
+          <div class="share-target-row">
+            <span class="share-target-label">Mã định danh:</span>
+            <strong id="delete-modal-doccode" class="doc-code-badge">VB-2026-0001</strong>
+          </div>
+          <div class="share-target-row">
+            <span class="share-target-label">Tên văn bản:</span>
+            <strong id="delete-modal-docname">Quyet_Dinh_Cong_Nhan_Tot_Nghiep_2026.txt</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-delete" class="btn-secondary">Hủy</button>
+        <button type="button" id="btn-confirm-delete" class="btn-danger">
+          Xác nhận xóa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

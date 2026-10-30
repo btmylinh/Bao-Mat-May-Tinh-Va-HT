@@ -1,0 +1,21 @@
+{
+  "name": "zero-trust-document-vault",
+  "version": "1.0.0",
+  "description": "Zero-Trust Document Vault - Cryptographic Integrity & Authenticity Verification System",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/security.test.js",
+    "tool:sha": "node scripts/sha-inspector.js",
+    "tool:soc": "node scripts/soc-detector.js"
+  },
+  "dependencies": {
+    "bcryptjs": "3.0.3",
+    "dotenv": "18.0.9",
+    "express": "4.22.3",
+    "jsonwebtoken": "9.0.3",
+    "mammoth": "1.8.0",
+    "multer": "2.5.0"
+  }
+}

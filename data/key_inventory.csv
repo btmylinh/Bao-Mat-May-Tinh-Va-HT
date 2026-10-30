@@ -1,0 +1,4 @@
+key_id,status,algorithm,key_size_bits,fingerprint_sha256_spki,created_at,notes
+vault-rsa-qa-2026Q4,QA_ONLY,RSA-OAEP-SHA256,2048,42cc346346ac662ff0af6df1ed3dcf5907a82d18de23df4c30803bf50a039e7a,2026-10-05,Test environment key; must not decrypt production envelopes
+vault-rsa-prod-2026Q4,ACTIVE,RSA-OAEP-SHA256,2048,70bc2b1dc23ba511038f9e6bdf753a63c06343b9472b6ea1c8af0ee3a6638eee,2026-10-01,Current production KEK/Issuer key; fingerprint is SHA-256 of DER SubjectPublicKeyInfo
+vault-rsa-retired-2026Q3,RETIRED,RSA-OAEP-SHA256,2048,57b6afd548daa42bb33fd0d9f0f2ddee5fe6de12cbc8ff754801d50c2a52ae07,2026-07-01,Retired key; included only in migration archive
