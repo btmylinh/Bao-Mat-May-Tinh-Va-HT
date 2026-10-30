@@ -16,15 +16,16 @@ Hệ thống tách bạch rõ ràng giữa **trải nghiệm nghiệp vụ văn 
 
 ---
 
-## 2. Bản Đồ Bộ Tài Liệu Dự Án (3 Tệp Tách Bạch)
+## 2. Bản Đồ Bộ Tài Liệu Dự Án (4 Tệp Tách Bạch)
 
-Bộ tài liệu của dự án được phân tách thành 3 tệp độc lập theo đúng chức năng, không trùng lặp nội dung:
+Bộ tài liệu của dự án được phân tách thành 4 tệp độc lập theo đúng chức năng, không trùng lặp nội dung:
 
 | STT | Tên tệp tài liệu | Phạm vi & Nội dung chuyên trách |
 | :--- | :--- | :--- |
 | **1** | **[README.md](file:///D:/University/Y4-5%20Bao%20Mat%20May%20Tinh%20Va%20HT/DACK/README.md)** *(Tệp hiện tại)* | Giới thiệu tổng quan dự án, cấu trúc thư mục, yêu cầu môi trường, hướng dẫn cài đặt, khởi chạy (`npm install`, `npm start`, `npm test`) và bảng tài khoản / dữ liệu thử nghiệm. |
 | **2** | **[TAI_LIEU_PHAN_MEM.md](file:///D:/University/Y4-5%20Bao%20Mat%20May%20Tinh%20Va%20HT/DACK/TAI_LIEU_PHAN_MEM.md)** | Đặc tả kiến trúc ứng dụng phần mềm, mô hình phân quyền vai trò (`Issuer` / `Recipient` / `Public`), đặc tả chi tiết 7 Use Case nghiệp vụ (`UC01 -> UC07`), thiết kế cơ sở dữ liệu SQLite (`5 bảng`) và hướng dẫn thao tác sử dụng giao diện phần mềm. |
 | **3** | **[PHUONG_PHAP_BAO_MAT.md](file:///D:/University/Y4-5%20Bao%20Mat%20May%20Tinh%20Va%20HT/DACK/PHUONG_PHAP_BAO_MAT.md)** | Báo cáo chuyên sâu về phương pháp bảo mật & mật mã học: Giải đáp 5 câu hỏi cốt lõi của đề bài, Mật mã phong bì lai `AES-256-GCM` + `RSA-OAEP-SHA256`, `AAD`, `RSA-PSS 2048-bit`, Hệ thống Phòng thủ 4 Lớp (`Runtime String Obfuscation`, `Strict Tunnel /api/zt-tunnel` + `404 Blackhole`, `Anti-DevTools Shield`, `Anti-Fuzzing HTTP 429`), bộ lệnh kiểm chứng thực tế và Ma trận nghiệm thu `28/28` ca kiểm thử. |
+| **4** | **[GIA_LAP_TAN_CONG.md](file:///D:/University/Y4-5%20Bao%20Mat%20May%20Tinh%20Va%20HT/DACK/GIA_LAP_TAN_CONG.md)** | Hướng dẫn thực nghiệm mô phỏng tấn công từ máy ảo VMware Windows 10 & công cụ bên thứ ba (Postman, cURL, HxD Hex Editor): Dò quét API, Fuzzing khóa IP, Vét cạn mật khẩu Pre-BCrypt, Can thiệp 1-byte tệp mã hóa, Chặn tệp thực thi `.exe` và Liên kết quá hạn. |
 
 ---
 
@@ -66,6 +67,7 @@ DACK/
 ├── README.md                      # Tổng quan dự án, cấu trúc thư mục & hướng dẫn cài đặt / khởi chạy
 ├── TAI_LIEU_PHAN_MEM.md           # Tài liệu đặc tả phần mềm, phân quyền, 7 Use Case, CSDL & hướng dẫn sử dụng
 ├── PHUONG_PHAP_BAO_MAT.md         # Tài liệu chuyên sâu phương pháp bảo mật, mật mã học, 4 lớp phòng thủ & kiểm chứng
+├── GIA_LAP_TAN_CONG.md            # Hướng dẫn thực nghiệm mô phỏng tấn công từ máy ảo VMware & công cụ bên thứ ba
 ├── server.js                      # Điểm khởi chạy máy chủ tại cổng 3000
 └── package.json                   # Cấu hình scripts và dependencies
 ```
