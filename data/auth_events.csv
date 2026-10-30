@@ -258,3 +258,14 @@ timestamp,user,src_ip,event,asset,details
 2026-10-30T02:38:47.254Z,ke_toan_02,203.0.113.199,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
 2026-10-30T02:38:47.255Z,issuer_admin,203.0.113.199,pre_bcrypt_blocked,auth-portal,pattern=PASSWORD_SPRAYING;risk=HIGH;fails=2;users=3
 2026-10-30T02:38:47.427Z,issuer_admin,127.0.0.1,login_success,auth-portal,stage=password_verified;risk=LOW
+2026-10-30T03:38:10.974Z,issuer_admin,127.0.0.1,login_success,auth-portal,stage=password_verified;risk=LOW
+2026-10-30T03:38:11.064Z,issuer_admin,127.0.0.1,login_success,auth-portal,stage=password_verified;risk=LOW
+2026-10-30T03:38:11.420Z,issuer_admin,198.51.100.77,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T03:38:11.485Z,issuer_admin,198.51.100.77,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T03:38:11.551Z,issuer_admin,198.51.100.77,login_failed,auth-portal,reason=invalid_credentials;risk=MEDIUM
+2026-10-30T03:38:11.616Z,issuer_admin,198.51.100.77,login_failed,auth-portal,reason=invalid_credentials;risk=MEDIUM
+2026-10-30T03:38:11.618Z,issuer_admin,198.51.100.77,pre_bcrypt_blocked,auth-portal,pattern=BRUTE_FORCE;risk=HIGH;fails=4;users=1
+2026-10-30T03:38:11.619Z,van_thu_01,203.0.113.199,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T03:38:11.621Z,ke_toan_02,203.0.113.199,login_failed,auth-portal,reason=invalid_credentials;risk=LOW
+2026-10-30T03:38:11.622Z,issuer_admin,203.0.113.199,pre_bcrypt_blocked,auth-portal,pattern=PASSWORD_SPRAYING;risk=HIGH;fails=2;users=3
+2026-10-30T03:38:11.802Z,issuer_admin,127.0.0.1,login_success,auth-portal,stage=password_verified;risk=LOW
